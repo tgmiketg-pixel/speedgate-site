@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpeedGate — The Future of Speed Measurement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   CSS VARIABLES & RESET
+   ═══════════════════════════════════════ */
+:root {
+  --bg: #08090C;
+  --bg2: #0D1117;
+  --card: #111820;
+  --border: #1A1F26;
+  --accent: #39FF14;
+  --accent2: #00E640;
+  --accent-dim: rgba(57, 255, 20, 0.08);
+  --accent-glow: rgba(57, 255, 20, 0.25);
+  --orange: #FF6B35;
+  --text: #F0F2F4;
+  --muted: #8B95A5;
+  --dim: #3A4250;
+  --font-display: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════
+   UTILITY
+   ═══════════════════════════════════════ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.accent { color: var(--accent); }
+.orange { color: var(--orange); }
+
+/* Reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(8, 9, 12, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+nav.scrolled {
+  background: rgba(8, 9, 12, 0.95);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.nav-logo svg { width: 32px; height: 40px; }
+.nav-logo span {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: var(--text);
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-cta {
+  background: var(--accent);
+  color: var(--bg) !important;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 700 !important;
+  transition: all 0.3s !important;
+}
+.nav-cta:hover {
+  box-shadow: 0 0 20px var(--accent-glow);
+  transform: translateY(-1px);
+}
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+.mobile-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  margin: 5px 0;
+  transition: all 0.3s;
+}
+
+/* ═══════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: 64px;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(57,255,20,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.3;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(57,255,20,0.15);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  animation: fadeIn 0.6s ease 0.2s both;
+}
+.hero-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.hero h1 {
+  font-size: clamp(48px, 6vw, 80px);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.7s ease 0.3s both;
+}
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 18px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 480px;
+  margin-bottom: 40px;
+  animation: fadeUp 0.7s ease 0.5s both;
+}
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  animation: fadeUp 0.7s ease 0.7s both;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 30px var(--accent-glow), 0 8px 32px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  animation: fadeIn 1s ease 0.5s both;
+}
+.hero-logo-wrap {
+  position: relative;
+  width: 340px;
+  height: 420px;
+}
+.hero-logo-wrap svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 60px rgba(57,255,20,0.2));
+}
+.hero-logo-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(circle, rgba(57,255,20,0.08) 0%, transparent 70%);
+  z-index: -1;
+}
+
+/* Stats bar under hero */
+.hero-stats {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  text-align: center;
+}
+.stat-item h3 {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  margin-bottom: 4px;
+}
+.stat-item p {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+/* ═══════════════════════════════════════
+   SECTION STYLING
+   ═══════════════════════════════════════ */
+section { padding: 120px 0; position: relative; }
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.section-title {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
+}
+.section-desc {
+  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 600px;
+  margin-bottom: 60px;
+}
+
+/* ═══════════════════════════════════════
+   PROBLEM SECTION
+   ═══════════════════════════════════════ */
+.problem { background: var(--bg); }
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.problem-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s;
+}
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #FF4444;
+  border-radius: 4px 0 0 4px;
+}
+.problem-card:hover {
+  border-color: rgba(255,68,68,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+.problem-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255,68,68,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+.problem-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.problem-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════
+   SOLUTION / HOW IT WORKS
+   ═══════════════════════════════════════ */
+.solution {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  position: relative;
+}
+.step-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s;
+}
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.step-card:nth-child(1)::before { background: var(--accent); }
+.step-card:nth-child(2)::before { background: var(--orange); }
+.step-card:nth-child(3)::before { background: var(--accent); }
+.step-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  border-color: var(--accent);
+}
+.step-num {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.step-card:nth-child(1) .step-num { color: var(--accent); }
+.step-card:nth-child(2) .step-num { color: var(--orange); }
+.step-card:nth-child(3) .step-num { color: var(--accent); }
+.step-icon {
+  font-size: 28px;
+  position: absolute;
+  top: 40px;
+  right: 32px;
+  opacity: 0.8;
+}
+.step-card h3 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+.step-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.step-connector {
+  display: none;
+  position: absolute;
+  top: 50%;
+  font-size: 24px;
+  color: var(--accent);
+}
+
+/* ═══════════════════════════════════════
+   FEATURES
+   ═══════════════════════════════════════ */
+.features { background: var(--bg); }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 36px;
+  transition: all 0.4s;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.feature-card:hover {
+  border-color: rgba(57,255,20,0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+}
+.feature-icon {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 12px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(57,255,20,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.feature-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.feature-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════
+   WHY NOW
+   ═══════════════════════════════════════ */
+.why-now {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.why-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 36px;
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+.why-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+}
+.why-card:nth-child(2)::after,
+.why-card:nth-child(3)::after { background: var(--orange); }
+.why-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  border-color: rgba(57,255,20,0.2);
+}
+.why-card .why-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  display: block;
+}
+.why-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.why-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ═══════════════════════════════════════
+   MARKET
+   ═══════════════════════════════════════ */
+.market { background: var(--bg); }
+.market-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.market-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 40px 32px;
+  text-align: center;
+  transition: all 0.4s;
+  position: relative;
+}
+.market-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--accent);
+  border-radius: 4px 0 0 4px;
+}
+.market-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  border-color: rgba(57,255,20,0.2);
+}
+.market-card .market-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.market-card h3 {
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--accent);
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+.market-card .market-label {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.market-card p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════
+   COMPETITIVE ADVANTAGE
+   ═══════════════════════════════════════ */
+.advantages {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.advantage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.advantage-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  transition: all 0.4s;
+}
+.advantage-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  border-color: rgba(57,255,20,0.2);
+}
+.advantage-card .adv-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+.advantage-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.advantage-card p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════
+   PRICING / TIERS
+   ═══════════════════════════════════════ */
+.pricing { background: var(--bg); }
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.price-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 32px;
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+.price-card.featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 40px rgba(57,255,20,0.08);
+}
+.price-card.featured::before {
+  content: 'BEST VALUE';
+  position: absolute;
+  top: 16px;
+  right: -32px;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 4px 40px;
+  transform: rotate(45deg);
+}
+.price-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.price-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.price-amount {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  margin-bottom: 4px;
+}
+.price-detail {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.price-features {
+  list-style: none;
+  margin-bottom: 32px;
+}
+.price-features li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.price-features li::before {
+  content: '✓';
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 13px;
+}
+.price-features li:last-child { border: none; }
+.price-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+}
+.price-btn.primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+.price-btn.primary:hover {
+  box-shadow: 0 0 20px var(--accent-glow);
+  transform: translateY(-1px);
+}
+.price-btn.outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.price-btn.outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ═══════════════════════════════════════
+   FOUNDER
+   ═══════════════════════════════════════ */
+.founder {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.founder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.founder-bio h3 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.founder-bio .founder-role {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+.founder-bio p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.founder-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+.founder-stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.founder-stat h4 {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.founder-stat p {
+  font-size: 12px !important;
+  color: var(--muted) !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+/* ═══════════════════════════════════════
+   CTA SECTION
+   ═══════════════════════════════════════ */
+.cta-section {
+  padding: 120px 0;
+  text-align: center;
+  position: relative;
+  background: var(--bg);
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(57,255,20,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-logo { margin-bottom: 32px; }
+.cta-logo svg {
+  width: 120px;
+  height: 156px;
+  filter: drop-shadow(0 0 40px rgba(57,255,20,0.2));
+}
+.cta-section h2 {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+}
+.cta-section .tagline {
+  font-size: 20px;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+.cta-section .cta-desc {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 500px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+.cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 48px;
+}
+
+/* ═══════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════ */
+footer {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+}
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.footer-left svg { width: 24px; height: 31px; }
+.footer-left span {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+.footer-right {
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+/* ═══════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+  .hero-sub { margin: 0 auto 40px; }
+  .hero-buttons { justify-content: center; }
+  .hero-visual { order: -1; }
+  .hero-logo-wrap { width: 200px; height: 260px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .problem-grid, .features-grid, .why-grid { grid-template-columns: 1fr; }
+  .steps-grid, .market-cards, .advantage-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+  .founder-grid { grid-template-columns: 1fr; text-align: center; }
+  .founder-stats { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .mobile-toggle { display: block; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+  .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+  section { padding: 80px 0; }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .hero h1 { font-size: 40px; }
+  .section-title { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="navG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#39FF14"/><stop offset="1" stop-color="#00E640"/></linearGradient></defs>
+        <path d="M100,5 L172,29 C182.7,34.3,190.7,42.3,196,53 L196,149 C196,165,190.7,178.3,180,189 L100,253 L20,189 C9.3,178.3,4,165,4,149 L4,53 C9.3,42.3,17.3,34.3,28,29 Z" stroke="url(#navG)" stroke-width="6" stroke-linejoin="round"/>
+        <polygon points="112.6,38.1 65.2,113.9 107.9,113.9 84.2,208.6 155.2,132.9 112.6,132.9" fill="url(#navG)"/>
+      </svg>
+      <span>SPEEDGATE</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#solution">Solution</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#founder">Founder</a></li>
+      <li><a href="#cta" class="nav-cta">Get Early Access</a></li>
+    </ul>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="hero-badge">Now in Development</div>
+      <h1>Know Your <br><span class="gradient-text">True Speed</span></h1>
+      <p class="hero-sub">Professional-grade laser timing, synchronized video capture, and AI biomechanics analysis — in one portable system for any field, any athlete.</p>
+      <div class="hero-buttons">
+        <a href="#pricing" class="btn-primary">Pre-Order Now →</a>
+        <a href="#solution" class="btn-secondary">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-logo-wrap">
+        <svg viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="heroG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#39FF14"/><stop offset="1" stop-color="#00E640"/></linearGradient></defs>
+          <path d="M100,5 L172,29 C182.7,34.3,190.7,42.3,196,53 L196,149 C196,165,190.7,178.3,180,189 L100,253 L20,189 C9.3,178.3,4,165,4,149 L4,53 C9.3,42.3,17.3,34.3,28,29 Z" stroke="url(#heroG)" stroke-width="4" stroke-linejoin="round"/>
+          <polygon points="112.6,38.1 65.2,113.9 107.9,113.9 84.2,208.6 155.2,132.9 112.6,132.9" fill="url(#heroG)"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="hero-stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal"><h3>&lt;10ms</h3><p>Timing Accuracy</p></div>
+      <div class="stat-item reveal reveal-delay-1"><h3>$399</h3><p>Starting Price</p></div>
+      <div class="stat-item reveal reveal-delay-2"><h3>100+</h3><p>Athletes in 20 Min</p></div>
+      <div class="stat-item reveal reveal-delay-3"><h3>40hrs</h3><p>Battery Life</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PROBLEM ═══════════════ -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="section-label reveal">The Problem</div>
+    <h2 class="section-title reveal">Athletes deserve better than<br>a <span class="accent">stopwatch and a guess</span></h2>
+    <p class="section-desc reveal">The sports performance market forces athletes to choose between expensive professional systems and unreliable consumer tools. Neither option works.</p>
+    <div class="problem-grid">
+      <div class="problem-card reveal">
+        <div class="problem-icon">⏱</div>
+        <h3>No Accurate Self-Timing</h3>
+        <p>Manual stopwatches introduce 0.2–0.5 second errors — the difference between a scholarship offer and being overlooked.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-icon">📹</div>
+        <h3>No Video Integration</h3>
+        <p>No timing system on the market creates synchronized video footage. Coaches use separate devices with manual, error-prone syncing.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-icon">🧬</div>
+        <h3>No Biometric Feedback</h3>
+        <p>Traditional timing gives you one number — time. No insight into stride mechanics, hip angles, or the biomechanics that drive performance.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <div class="problem-icon">🔒</div>
+        <h3>Verification Issues</h3>
+        <p>When athletes share performance times for recruiting, there's no way to verify accuracy. Self-reported times carry zero credibility.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SOLUTION ═══════════════ -->
+<section class="solution" id="solution">
+  <div class="container">
+    <div class="section-label reveal">The Solution</div>
+    <h2 class="section-title reveal">Three steps to <span class="accent">verified speed</span></h2>
+    <p class="section-desc reveal">A computer-powered timing and video system that integrates laser precision timing with synchronized video and AI biomechanics analysis.</p>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon">📹</div>
+        <h3>Record</h3>
+        <p>Camera starts before the runner's takeoff — capturing every frame of the sprint in high resolution, automatically synchronized with timing data.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-num">02</div>
+        <div class="step-icon">⚡</div>
+        <h3>Run</h3>
+        <p>Athlete sprints through the laser timing gate. Sub-10ms precision measurement captures the exact moment, comparable to professional systems.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-num">03</div>
+        <div class="step-icon">🧠</div>
+        <h3>Review</h3>
+        <p>Perfectly synchronized timer overlay on sprint video. AI analyzes biomechanics — stride count, hip angles, speed zones — with shareable verified results.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-label reveal">Product</div>
+    <h2 class="section-title reveal">Everything in <span class="accent">one system</span></h2>
+    <p class="section-desc reveal">No wearables. No manual syncing. No expensive lab access. Just set up, sprint, and get professional-grade data.</p>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">⚙️</div>
+        <div><h3>Integrated Smart Unit</h3><p>Wireless portable housing with onboard computer, precision laser timing module, and high-resolution camera. Weather-resistant for outdoor use.</p></div>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon">📱</div>
+        <div><h3>Smartphone Connectivity</h3><p>Seamless Bluetooth connection to iOS/Android app. Instant upload to cloud, social platforms, and AI-powered analytics engine.</p></div>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon">🧠</div>
+        <div><h3>AI Performance Analysis</h3><p>Stride mechanics, hip lift angles, acceleration phases, and comparative strength metrics. Personalized recommendations to improve times.</p></div>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon">👥</div>
+        <div><h3>High-Throughput Testing</h3><p>Test an entire college roster (100+ athletes) in the 40-yard dash with individual video capture and data logging in under 20 minutes.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ WHY NOW ═══════════════ -->
+<section class="why-now">
+  <div class="container">
+    <div class="section-label reveal">Why Now</div>
+    <h2 class="section-title reveal">The perfect storm of <span class="accent">technology,<br>culture, and market forces</span></h2>
+    <p class="section-desc reveal">SpeedGate is launching into a market that's pulling for this product — not pushing against it.</p>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <span class="why-icon">📲</span>
+        <h3>SOCIAL MEDIA EXPLOSION</h3>
+        <p>Athletes are content creators. Shareable sprint videos with verified timing overlays are the new highlight reel — TikTok, Instagram, and recruiting platforms demand it.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-1">
+        <span class="why-icon">🎓</span>
+        <h3>NIL & RECRUITING BOOM</h3>
+        <p>Name/Image/Likeness rules have turned every athlete into a brand. Verified speed data is now recruiting currency — proof that opens doors.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <span class="why-icon">🤖</span>
+        <h3>AI MATURITY</h3>
+        <p>Computer vision and biomechanics AI have hit an inflection point — real-time analysis is now possible on edge devices at consumer price points.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-3">
+        <span class="why-icon">🔥</span>
+        <h3>SPEED CULTURE</h3>
+        <p>The 40-yard dash is the #1 most viral combine metric. Speed is the universal measure of athleticism across football, soccer, baseball, and track.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MARKET ═══════════════ -->
+<section class="market" id="market">
+  <div class="container">
+    <div class="section-label reveal">Market Opportunity</div>
+    <h2 class="section-title reveal">A <span class="accent">$1.2B+</span> global market<br>waiting to be disrupted</h2>
+    <p class="section-desc reveal">3,000,000+ athletes underserved by existing timing solutions. SpeedGate unlocks mass-market access at 1/3 the price of competitors.</p>
+    <div class="market-cards">
+      <div class="market-card reveal">
+        <div class="market-tag">Total Addressable Market</div>
+        <h3>$1.2B+</h3>
+        <div class="market-label">Global Sports Timing & Performance Technology</div>
+        <p>Projected to reach $771.3M by 2030 with 8.3% CAGR — and expanding as AI analytics grow the category.</p>
+      </div>
+      <div class="market-card reveal reveal-delay-1">
+        <div class="market-tag">Serviceable Available Market</div>
+        <h3>$520M+</h3>
+        <div class="market-label">U.S. & Prosumer Sports Timing & Analytics</div>
+        <p>50M+ athletes in the U.S. training or competing. 10M+ performance-driven athletes and programs actively seeking tools.</p>
+      </div>
+      <div class="market-card reveal reveal-delay-2">
+        <div class="market-tag">5-Year Target</div>
+        <h3>$45–60M</h3>
+        <div class="market-label">Initial SpeedGate Serviceable Obtainable Market</div>
+        <p>At $300–$400 per unit, SpeedGate is priced 70–80% below legacy competitors, opening massive new market access.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ADVANTAGES ═══════════════ -->
+<section class="advantages">
+  <div class="container">
+    <div class="section-label reveal">Competitive Advantage</div>
+    <h2 class="section-title reveal">Why SpeedGate <span class="accent">wins</span></h2>
+    <p class="section-desc reveal">Accuracy, scale, usability, and cost — without forcing tradeoffs.</p>
+    <div class="advantage-grid">
+      <div class="advantage-card reveal">
+        <div class="adv-icon">🚀</div>
+        <h3>First to Market</h3>
+        <p>First platform combining precision laser timing, synchronized video, and AI analytics in one affordable system.</p>
+      </div>
+      <div class="advantage-card reveal reveal-delay-1">
+        <div class="adv-icon">🛡️</div>
+        <h3>Data & IP Moat</h3>
+        <p>Every sprint builds a proprietary dataset. Patents filed on core architecture, timing sync, and AI workflow.</p>
+      </div>
+      <div class="advantage-card reveal reveal-delay-2">
+        <div class="adv-icon">⚙️</div>
+        <h3>Integrated System</h3>
+        <p>Timing, video, cloud storage, and AI analysis in one seamless workflow — no wearables, no manual syncing.</p>
+      </div>
+      <div class="advantage-card reveal reveal-delay-3">
+        <div class="adv-icon">👥</div>
+        <h3>Team-Scale Speed</h3>
+        <p>Test 100+ athletes in under 20 minutes with automatic individual video capture and data logging.</p>
+      </div>
+      <div class="advantage-card reveal reveal-delay-4">
+        <div class="adv-icon">📱</div>
+        <h3>Ease of Use</h3>
+        <p>Set up in under 2 minutes. Operated from a smartphone. Designed for coaches and athletes, not labs.</p>
+      </div>
+      <div class="advantage-card reveal">
+        <div class="adv-icon">💰</div>
+        <h3>Affordable by Design</h3>
+        <p>Professional-grade accuracy at 1/3 the cost of Brower Timing and Finish Lynx, enabling mass adoption.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PRICING ═══════════════ -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-label reveal" style="text-align:center;">Pricing</div>
+    <h2 class="section-title reveal" style="text-align:center;">Choose your <span class="accent">SpeedGate</span></h2>
+    <p class="section-desc reveal" style="text-align:center; margin-left:auto; margin-right:auto;">Early supporters get the best price SpeedGate will ever be offered at. Every kit ships with the SpeedGate mobile app.</p>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="price-name">Base Kit</div>
+        <div class="price-amount">$449</div>
+        <div class="price-detail">Save $50 off retail</div>
+        <ul class="price-features">
+          <li>1x SpeedGate Timing Gate</li>
+          <li>1x Remote Start Controller</li>
+          <li>SpeedGate Mobile App (iOS/Android)</li>
+          <li>Free shipping (US)</li>
+          <li>2-year warranty</li>
+          <li>1 month Athlete Pro subscription</li>
+        </ul>
+        <a href="#cta" class="price-btn outline">Reserve Now</a>
+      </div>
+      <div class="price-card featured reveal reveal-delay-1">
+        <div class="price-name">Pro Kit</div>
+        <div class="price-amount">$599</div>
+        <div class="price-detail">Save $100 off retail</div>
+        <ul class="price-features">
+          <li>2x SpeedGate Timing Gates (start + finish)</li>
+          <li>1x Remote Start Controller</li>
+          <li>Enhanced two-gate verification</li>
+          <li>Split timing for acceleration zones</li>
+          <li>Free shipping (US) + 2-year warranty</li>
+          <li>6 months Athlete Pro subscription</li>
+        </ul>
+        <a href="#cta" class="price-btn primary">Reserve Now</a>
+      </div>
+      <div class="price-card reveal reveal-delay-2">
+        <div class="price-name">Coach Bundle</div>
+        <div class="price-amount">$999</div>
+        <div class="price-detail">Complete program solution — Save $250</div>
+        <ul class="price-features">
+          <li>2x Pro Kits (4 gates total)</li>
+          <li>2x Remote Controllers</li>
+          <li>Coach Dashboard with team management</li>
+          <li>Priority support and training</li>
+          <li>Free shipping (US) + 3-year warranty</li>
+          <li>1 year Team Pro subscription</li>
+        </ul>
+        <a href="#cta" class="price-btn outline">Reserve Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOUNDER ═══════════════ -->
+<section class="founder" id="founder">
+  <div class="container">
+    <div class="founder-grid">
+      <div class="reveal">
+        <div class="section-label">The Founder</div>
+        <h2 class="section-title">Built by an athlete<br>who <span class="accent">lived the problem</span></h2>
+        <p style="font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:16px;">When I was coming up as a young athlete, I had coaches who believed in me. They timed my runs, gave me feedback, and helped me improve. But I was lucky — I had access.</p>
+        <p style="font-size:15px; color:var(--muted); line-height:1.75;">Most athletes don't. They train without equipment, work with volunteer coaches who lack resources, and get overlooked — not because they're not good enough, but because the system isn't built for them. SpeedGate is my attempt to fix that.</p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <div class="founder-bio">
+          <h3>Michael Montoya</h3>
+          <div class="founder-role">Founder, Inventor & Performance Technology Innovator</div>
+          <p>Former professional athlete (CFL) with a 9.69 Relative Athletic Score. Creator of the NeuroReformer neuromuscular training system. Patent holder with deep expertise in hardware design, biomechanics, and sports performance technology.</p>
+        </div>
+        <div class="founder-stats">
+          <div class="founder-stat">
+            <h4>ELITE ATHLETE</h4>
+            <p>9.69 RAS — Pro-level speed & explosion</p>
+          </div>
+          <div class="founder-stat">
+            <h4>HARDWARE INVENTOR</h4>
+            <p>NeuroReformer — concept to deployed product</p>
+          </div>
+          <div class="founder-stat">
+            <h4>IP PROTECTED</h4>
+            <p>Patents on architecture, timing & AI workflow</p>
+          </div>
+          <div class="founder-stat">
+            <h4>PLATFORM VISION</h4>
+            <p>Verified athletic data for recruiting & NIL</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<section class="cta-section" id="cta">
+  <div class="container">
+    <div class="cta-logo reveal">
+      <svg viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="ctaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#39FF14"/><stop offset="1" stop-color="#00E640"/></linearGradient></defs>
+        <path d="M100,5 L172,29 C182.7,34.3,190.7,42.3,196,53 L196,149 C196,165,190.7,178.3,180,189 L100,253 L20,189 C9.3,178.3,4,165,4,149 L4,53 C9.3,42.3,17.3,34.3,28,29 Z" stroke="url(#ctaG)" stroke-width="4" stroke-linejoin="round"/>
+        <polygon points="112.6,38.1 65.2,113.9 107.9,113.9 84.2,208.6 155.2,132.9 112.6,132.9" fill="url(#ctaG)"/>
+      </svg>
+    </div>
+    <h2 class="reveal">SPEEDGATE</h2>
+    <div class="tagline reveal">The Future of Speed Measurement</div>
+    <p class="cta-desc reveal">Every athlete deserves to know their true speed. Every coach deserves tools that work. Every program deserves access to precision.</p>
+    <div class="cta-buttons reveal">
+      <a href="/cdn-cgi/l/email-protection#afc2d6dcdfcacacbc8cedbcaefc8c2cec6c381ccc0c2" class="btn-primary">Get Early Access →</a>
+      <a href="#pricing" class="btn-secondary">View Pricing</a>
+    </div>
+    <p class="reveal" style="font-size:13px; color:var(--dim); letter-spacing:1px;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="14796d676471717073756071547379757d783a777b79">[email&#160;protected]</a></p>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-left">
+      <svg viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="ftG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#39FF14"/><stop offset="1" stop-color="#00E640"/></linearGradient></defs>
+        <path d="M100,5 L172,29 C182.7,34.3,190.7,42.3,196,53 L196,149 C196,165,190.7,178.3,180,189 L100,253 L20,189 C9.3,178.3,4,165,4,149 L4,53 C9.3,42.3,17.3,34.3,28,29 Z" stroke="url(#ftG)" stroke-width="6" stroke-linejoin="round"/>
+        <polygon points="112.6,38.1 65.2,113.9 107.9,113.9 84.2,208.6 155.2,132.9 112.6,132.9" fill="url(#ftG)"/>
+      </svg>
+      <span>SPEEDGATE</span>
+    </div>
+    <div class="footer-right">© 2026 SpeedGate. All rights reserved. Confidential.</div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal with fallback
+try {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+} catch(e) {
+  // Fallback: show everything if IntersectionObserver fails
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+}
+
+// Extra safety: if nothing is visible after 2 seconds, force show all
+setTimeout(() => {
+  const hidden = document.querySelectorAll('.reveal:not(.visible)');
+  if (hidden.length > 10) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }
+}, 2000);
+
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+</script>
+</body>
+</html>
