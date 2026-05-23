@@ -1,0 +1,10 @@
+# Files wrangler should never ship as public assets.
+.git/
+.wrangler/
+.gitignore
+.gitattributes
+.assetsignore
+desktop.ini
+wrangler.jsonc
+CNAME
+*.md
