@@ -684,6 +684,76 @@ section { padding: 120px 0; position: relative; overflow: hidden; }
   .sports-grid { grid-template-columns: 1fr; }
 }
 
+/* Capability matrix (Skills Mode) — minimal styling; design polish deferred */
+.capability-matrix {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px;
+  margin-bottom: 32px;
+}
+.capability-matrix-heading {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.capability-matrix-legend {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.capability-matrix-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.capability-matrix-legend .key-full { color: var(--accent); font-weight: 700; }
+.capability-matrix-legend .key-partial { color: var(--orange); font-weight: 700; }
+.capability-matrix-legend .key-none { color: var(--dim); font-weight: 700; }
+.capability-matrix-wrap { overflow-x: auto; }
+.capability-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.capability-table thead th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.capability-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  vertical-align: top;
+}
+.capability-table tbody tr:last-child td { border-bottom: none; }
+.capability-table .cap-full { color: var(--accent); }
+.capability-table .cap-partial { color: var(--orange); }
+.capability-table .cap-none { color: var(--dim); }
+.capability-matrix-footnote {
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-top: 20px;
+  font-style: italic;
+}
+@media (max-width: 700px) {
+  .capability-matrix { padding: 20px; }
+  .capability-table thead th,
+  .capability-table tbody td { padding: 10px 8px; font-size: 13px; }
+}
+
 /* ═══════════════════════════════════════
    WHY NOW
    ═══════════════════════════════════════ */
@@ -1161,7 +1231,7 @@ footer {
     <div>
       <div class="hero-badge">Now in Development</div>
       <h1>Know Your <br><span class="gradient-text">True Speed</span></h1>
-      <p class="hero-sub">Professional-grade laser timing, synchronized video capture, and AI biomechanics analysis — for sprints, dribbling, puck handling, and every sport skill. One portable system, any field, any athlete.</p>
+      <p class="hero-sub">Professional-grade laser timing, synchronized video capture, and AI biomechanics analysis — for sprints, dribbling, ball control, and every sport skill. One portable system, any field, any athlete.</p>
       <div class="hero-buttons">
         <a href="#pricing" class="btn-primary">Pre-Order Now →</a>
         <a href="#solution" class="btn-secondary">See How It Works</a>
@@ -1184,7 +1254,7 @@ footer {
   <div class="container">
     <div class="stats-grid">
       <div class="stat-item reveal"><h3>&lt;10ms</h3><p>Timing Accuracy</p></div>
-      <div class="stat-item reveal reveal-delay-1"><h3>$399</h3><p>Starting Price</p></div>
+      <div class="stat-item reveal reveal-delay-1"><h3>$149</h3><p>Starting Price</p></div>
       <div class="stat-item reveal reveal-delay-2"><h3>100+</h3><p>Athletes in 20 Min</p></div>
       <div class="stat-item reveal reveal-delay-3"><h3>40hrs</h3><p>Battery Life</p></div>
     </div>
@@ -1268,7 +1338,7 @@ footer {
       </div>
       <div class="feature-card reveal reveal-delay-2">
         <div class="feature-icon">🧠</div>
-        <div><h3>AI Performance Analysis</h3><p>Sprint biomechanics plus multi-sport Skills Mode — analyzing ball handling, dribble efficiency, puck control, and technique across every sport.</p></div>
+        <div><h3>AI Performance Analysis</h3><p>Sprint biomechanics for every sport, plus ball-control analysis for ball sports like basketball and soccer — measuring handling quality at top speed.</p></div>
       </div>
       <div class="feature-card reveal reveal-delay-3">
         <div class="feature-icon">👥</div>
@@ -1283,12 +1353,12 @@ footer {
   <div class="container">
     <div class="section-label reveal">Skills Mode</div>
     <h2 class="section-title reveal">Same hardware. <span class="accent">Every sport.</span></h2>
-    <p class="section-desc reveal">Athletes dribble, stickhandle, or maneuver through the gates while AI tracks both the athlete and the object — measuring speed, control quality, and technique simultaneously.</p>
+    <p class="section-desc reveal">Every athlete who runs the gate gets precision speed and sprint biomechanics. For ball sports, the same camera tracks the ball alongside them — scoring how cleanly they control it at top speed.</p>
 
     <div class="skills-intro">
       <div class="skills-intro-card reveal">
         <h3>Beyond Speed</h3>
-        <p>SpeedGate gates capture more than sprint times. The same precision timing gates become multi-sport skill analysis tools — measuring not just how fast an athlete moves, but how well they control a ball or puck while doing it.</p>
+        <p>SpeedGate's gates capture more than sprint times. The same precision timing and camera become a full performance lab — measuring how fast an athlete moves, and how well they move while doing it, in any sport.</p>
       </div>
       <div class="skills-intro-card reveal reveal-delay-1">
         <h3>Platform Expansion</h3>
@@ -1322,25 +1392,64 @@ footer {
         </ul>
       </div>
       <div class="sport-card reveal reveal-delay-2">
-        <span class="sport-emoji">🏒</span>
-        <h3>HOCKEY</h3>
+        <span class="sport-emoji">🏈</span>
+        <h3>FOOTBALL</h3>
         <ul>
-          <li>Stickhandling frequency</li>
-          <li>Puck proximity score</li>
-          <li>Forehand / backhand ratio</li>
-          <li>Edge work &amp; stride analysis</li>
-          <li>Speed differential (w/ vs. w/o puck)</li>
-          <li>Composite efficiency rating</li>
+          <li>40-yard dash — verified</li>
+          <li>10 &amp; 20-yard splits</li>
+          <li>Acceleration &amp; top-speed profile</li>
+          <li>Get-off / first-step explosiveness</li>
+          <li>Sprint form &amp; mechanics</li>
+          <li>Roster testing: 100+ athletes in 20 min</li>
         </ul>
       </div>
     </div>
 
     <div class="more-sports reveal">
-      <span>🏈 Football Routes</span>
-      <span>🥍 Lacrosse</span>
       <span>🏑 Field Hockey</span>
+      <span>🥍 Lacrosse</span>
       <span>🏉 Rugby</span>
-      <span>⚾ Baseball Agility</span>
+      <span>⚾ Baseball</span>
+      <span>🏒 Hockey</span>
+      <span>🎾 Tennis</span>
+      <span>🏃 Track &amp; Field</span>
+    </div>
+
+    <div class="capability-matrix reveal">
+      <h3 class="capability-matrix-heading reveal">What SpeedGate measures, sport by sport</h3>
+      <div class="capability-matrix-legend reveal reveal-delay-1">
+        <span><span class="key-full">✓</span> full</span>
+        <span><span class="key-partial">◑</span> partial / limited</span>
+        <span><span class="key-none">—</span> not applicable</span>
+      </div>
+      <div class="capability-matrix-wrap reveal reveal-delay-2">
+        <table class="capability-table">
+          <thead>
+            <tr>
+              <th>Sport</th>
+              <th>Speed Timing</th>
+              <th>Sprint Biomechanics</th>
+              <th>Ball Tracking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Basketball</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-full">✓ dribble control at speed</td></tr>
+            <tr><td>Soccer</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-full">✓ close control at speed</td></tr>
+            <tr><td>Football (American)</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-partial">◑ ball-carry security</td></tr>
+            <tr><td>Rugby</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-partial">◑ ball-carry security</td></tr>
+            <tr><td>Track &amp; Field — sprints, hurdles</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-none">—</td></tr>
+            <tr><td>Baseball / Softball</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-none">—</td></tr>
+            <tr><td>Tennis</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-none">—</td></tr>
+            <tr><td>Lacrosse</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-none">—</td></tr>
+            <tr><td>Field Hockey</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-none">—</td></tr>
+            <tr><td>Cricket</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-none">—</td></tr>
+            <tr><td>Aussie Rules / Gaelic / Handball / Netball / Ultimate</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-none">—</td></tr>
+            <tr><td>Ice Hockey</td><td class="cap-full">✓</td><td class="cap-partial">◑ skating, not running form</td><td class="cap-none">—</td></tr>
+            <tr><td>Any land sport — combine / S&amp;C testing</td><td class="cap-full">✓</td><td class="cap-full">✓</td><td class="cap-none">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="capability-matrix-footnote reveal reveal-delay-3">Small, fast objects — hockey pucks, baseballs and golf balls in flight, shuttlecocks — are too small and too fast for camera tracking. Those sports still get SpeedGate's full speed and biomechanics analysis.</p>
     </div>
 
     <p class="skills-tagline reveal">Speed was the entry point. Skills is the platform.</p>
@@ -1383,13 +1492,13 @@ footer {
   <div class="container">
     <div class="section-label reveal">Market Opportunity</div>
     <h2 class="section-title reveal">A <span class="accent">$1.2B+</span> global market<br>waiting to be disrupted</h2>
-    <p class="section-desc reveal">3,000,000+ athletes underserved by existing timing solutions. SpeedGate unlocks mass-market access at 1/3 the price of competitors.</p>
+    <p class="section-desc reveal">3,000,000+ athletes underserved by existing timing solutions. SpeedGate unlocks mass-market access at a fraction of the price of legacy competitors.</p>
     <div class="market-cards">
       <div class="market-card reveal">
         <div class="market-tag">Total Addressable Market</div>
         <h3>$1.2B+</h3>
         <div class="market-label">Global Sports Timing & Performance Technology</div>
-        <p>Projected to reach $771.3M by 2030 with 8.3% CAGR — and expanding as AI analytics grow the category.</p>
+        <p>Projected to reach $1.8B+ by 2030 with 8.3% CAGR — and expanding as AI analytics grow the category.</p>
       </div>
       <div class="market-card reveal reveal-delay-1">
         <div class="market-tag">Serviceable Available Market</div>
@@ -1401,7 +1510,7 @@ footer {
         <div class="market-tag">5-Year Target</div>
         <h3>$45–60M</h3>
         <div class="market-label">Initial SpeedGate Serviceable Obtainable Market</div>
-        <p>At $300–$400 per unit, SpeedGate is priced 70–80% below legacy competitors, opening massive new market access.</p>
+        <p>At $149–$449 per kit, SpeedGate is priced 75–90% below legacy competitors, opening massive new market access.</p>
       </div>
     </div>
   </div>
@@ -1432,7 +1541,7 @@ footer {
       <div class="advantage-card reveal reveal-delay-3">
         <div class="adv-icon">🌐</div>
         <h3>Multi-Sport Platform</h3>
-        <p>Skills Mode expands from speed to basketball, soccer, hockey, and more — same hardware, 3–5x larger market.</p>
+        <p>Skills Mode expands from speed to basketball, soccer, football, and more — same hardware, 3–5x larger market.</p>
       </div>
       <div class="advantage-card reveal reveal-delay-4">
         <div class="adv-icon">📱</div>
@@ -1442,7 +1551,7 @@ footer {
       <div class="advantage-card reveal">
         <div class="adv-icon">💰</div>
         <h3>Affordable by Design</h3>
-        <p>Professional-grade accuracy at 1/3 the cost of Brower Timing and Finish Lynx, enabling mass adoption.</p>
+        <p>Professional-grade accuracy starting at 1/5 the cost of Brower Timing and Finish Lynx, enabling mass adoption.</p>
       </div>
     </div>
   </div>
@@ -1457,8 +1566,8 @@ footer {
     <div class="pricing-grid">
       <div class="price-card reveal">
         <div class="price-name">Base Kit</div>
-        <div class="price-amount">$449</div>
-        <div class="price-detail">Save $50 off retail</div>
+        <div class="price-amount">$149</div>
+        <div class="price-detail">Save 40% off retail</div>
         <ul class="price-features">
           <li>1x SpeedGate Timing Gate</li>
           <li>1x Remote Start Controller</li>
@@ -1471,8 +1580,8 @@ footer {
       </div>
       <div class="price-card featured reveal reveal-delay-1">
         <div class="price-name">Pro Kit</div>
-        <div class="price-amount">$599</div>
-        <div class="price-detail">Save $100 off retail</div>
+        <div class="price-amount">$249</div>
+        <div class="price-detail">Save 45% off retail</div>
         <ul class="price-features">
           <li>2x SpeedGate Timing Gates (start + finish)</li>
           <li>1x Remote Start Controller</li>
@@ -1485,8 +1594,8 @@ footer {
       </div>
       <div class="price-card reveal reveal-delay-2">
         <div class="price-name">Coach Bundle</div>
-        <div class="price-amount">$999</div>
-        <div class="price-detail">Complete program solution — Save $250</div>
+        <div class="price-amount">$449</div>
+        <div class="price-detail">Complete program solution — Save 50% off retail</div>
         <ul class="price-features">
           <li>2x Pro Kits (4 gates total)</li>
           <li>2x Remote Controllers</li>
