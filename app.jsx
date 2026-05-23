@@ -88,14 +88,17 @@ const HeroCapture = () => {
   // runner left position 8% → 78%
   const runnerLeft = 8 + t * 70;
 
-  // biomech dots — appear progressively as runner moves
-  const biomechDots = [
-    { t: 0.20, x: 16, y: 40 },
-    { t: 0.35, x: 30, y: 38 },
-    { t: 0.50, x: 44, y: 42 },
-    { t: 0.65, x: 58, y: 38 },
-    { t: 0.80, x: 72, y: 40 },
+  // biomech dots track WITH the runner (hip, knee, shoulder) — small offsets
+  // around the runner's current position so they look like body tracking points
+  const showBiomech = t > 0.08 && t < 0.95;
+  const dotOffsets = [
+    { dx: 18, dy: 70, label: 'shoulder' },  // shoulder
+    { dx: 14, dy: 50, label: 'hip' },       // hip
+    { dx: 22, dy: 30, label: 'knee' },      // knee front
+    { dx: 4, dy: 28, label: 'knee-b' },     // knee back
   ];
+  // small wobble so dots look like live tracking, not static decals
+  const wob = Math.sin(t * 18) * 1.5;
 
   return (
     <div className={"capture " + (phase === 'done' ? 'is-verified' : '')}>
@@ -127,19 +130,17 @@ const HeroCapture = () => {
         <div className="gate-r"></div>
         <div className="laser-line"></div>
 
-        {/* biomechanics dots that appear as runner crosses */}
-        {biomechDots.map((d, i) => (
-          t > d.t && (
-            <div
-              key={i}
-              className="biomech-dot"
-              style={{
-                left: d.x + '%',
-                bottom: d.y + '%',
-                opacity: Math.min(1, (t - d.t) * 5),
-              }}
-            />
-          )
+        {/* biomechanics dots that follow the runner */}
+        {showBiomech && dotOffsets.map((d, i) => (
+          <div
+            key={i}
+            className="biomech-dot"
+            style={{
+              left: `calc(${runnerLeft}% + ${d.dx}px)`,
+              bottom: `calc(6% + ${d.dy + wob * (i % 2 ? 1 : -1)}px)`,
+              opacity: 0.85,
+            }}
+          />
         ))}
 
         {/* running figure */}
